@@ -1,0 +1,17 @@
+<resources>
+    <!-- Strings related to ProviderDashboard -->
+    <string name="app_name">Dashboard</string>
+    <string name="dash_scan_result_empty_dialog_title">Scan result is empty</string>
+    <string name="dash_scan_result_empty_dialog_message">The information is not received. Try again?</string>
+    <string name="dash_scan_result_empty_dialog_button_yes">Yes</string>
+    <string name="dash_scan_result_empty_dialog_button_no">No</string>
+    <string name="dash_download_qr_reader_dialog_title">"No Scanner Found"</string>
+    <string name="dash_download_qr_reader_dialog_message">"Download a scanner code?"</string>
+    <string name="dash_download_qr_reader_dialog_button_yes">Yes</string>
+    <string name="dash_download_qr_reader_dialog_button_no">No</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+</resources>

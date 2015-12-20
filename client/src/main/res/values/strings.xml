@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Subscriptions App</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Strings related to subscription list-->
+    <string name="title_activity_subscription_list">Your subscriptions</string>
+    <string name="title_activity_navigation_drawer">NavigationDrawer</string>
+    <string name="sub_navigation_drawer_open">Open navigation drawer</string>
+    <string name="sub_navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Strings related to registration-->
+    <string name="title_activity_registration">Registration</string>
+    <string name="prompt_reg_email">Email</string>
+    <string name="prompt_reg_first_name">First name</string>
+    <string name="prompt_reg_second_name">Second name</string>
+    <string name="prompt_reg_phone_number">Phone number</string>
+    <string name="action_reg_register">Send</string>
+    <string name="error_reg_invalid_email">This email address is invalid</string>
+    <string name="error_reg_field_required">This field is required</string>
+    <string name="action_reg_registration">Registration</string>
+    <string name="permission_reg_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+
+    <!-- Strings related to show QR code -->
+    <string name="title_activity_show_qrcode">Sharing personal information</string>
+    <string name="label_qr_warning">Please pay attention you are sharing your personal information now!</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+</resources>
