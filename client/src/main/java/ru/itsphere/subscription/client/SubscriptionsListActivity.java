@@ -9,17 +9,26 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import ru.itsphere.subscription.common.service.SubscriptionService;
+import java.util.List;
+
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
+import ru.itsphere.subscription.client.adapter.SubscriptionAdapter;
+import ru.itsphere.subscription.common.service.Repository;
+import ru.itsphere.subscription.domain.Subscription;
 
 public class SubscriptionsListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String tag = SubscriptionsListActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,17 +60,33 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
 
     private void createSubscriptionsView() {
         final ListView subscriptionsView = (ListView) findViewById(R.id.subscriptions);
-        subscriptionsView.setAdapter(new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                android.R.id.text1,
-                SubscriptionService.getAll()));
+        initSubscriptionsFromServer(subscriptionsView);
         subscriptionsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String itemValue = (String) subscriptionsView.getItemAtPosition(position);
+                Subscription subscription = (Subscription) subscriptionsView.getItemAtPosition(position);
                 Toast.makeText(getApplicationContext(),
-                        "Position :" + position + "  ListItem : " + itemValue, Toast.LENGTH_LONG).show();
+                        "Position :" + position + "  ListItem : " + subscription.getName(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void initSubscriptionsFromServer(final ListView subscriptionsView) {
+        new Repository().getAllSubscriptions().enqueue(new Callback<List<Subscription>>() {
+            @Override
+            public void onResponse(Response<List<Subscription>> response, Retrofit retrofit) {
+                subscriptionsView.setAdapter(new SubscriptionAdapter(
+                        SubscriptionsListActivity.this,
+                        android.R.layout.simple_list_item_1,
+                        android.R.id.text1,
+                        response.body()));
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                String msg = "getAllSubscriptions with client: ";
+                Log.e(tag, msg, t);
+                Toast.makeText(getApplicationContext(), msg + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

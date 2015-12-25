@@ -22,7 +22,7 @@ public class StartupActivity extends AppCompatActivity {
         Class<? extends Activity> nextActivity = RegistrationActivity.class;
         if (RegistrationService.isAlreadyRegistered()) {
             Log.d(tag, "The user already registered");
-            nextActivity = ru.itsphere.subscription.client.SubscriptionsListActivity.class;
+            nextActivity = SubscriptionsListActivity.class;
         }
         Intent intent = new Intent(this, nextActivity);
         startActivity(intent);
