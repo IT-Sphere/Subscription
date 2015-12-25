@@ -35,7 +35,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.itsphere.subscription.common.domain.Client;
+import ru.itsphere.subscription.domain.Client;
 import ru.itsphere.subscription.common.service.RegistrationService;
 
 import static android.Manifest.permission.READ_CONTACTS;

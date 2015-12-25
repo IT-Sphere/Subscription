@@ -3,7 +3,7 @@ package ru.itsphere.subscription.common.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.itsphere.subscription.common.domain.Client;
+import ru.itsphere.subscription.domain.Client;
 
 /**
  * Responsible for actions related to the registration

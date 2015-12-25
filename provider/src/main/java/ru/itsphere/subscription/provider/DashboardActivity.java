@@ -21,7 +21,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import ru.itsphere.subscription.common.domain.Client;
+import ru.itsphere.subscription.domain.Client;
 import ru.itsphere.subscription.common.service.RegistrationService;
 
 public class DashboardActivity extends AppCompatActivity

@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 
-import ru.itsphere.subscription.common.domain.Client;
+import ru.itsphere.subscription.domain.Client;
 import ru.itsphere.subscription.client.qrcode.Contents;
 import ru.itsphere.subscription.client.qrcode.QRCodeEncoder;
 import ru.itsphere.subscription.common.service.RegistrationService;
