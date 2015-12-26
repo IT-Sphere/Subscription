@@ -14,10 +14,13 @@ import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 
-import ru.itsphere.subscription.domain.Client;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 import ru.itsphere.subscription.client.qrcode.Contents;
 import ru.itsphere.subscription.client.qrcode.QRCodeEncoder;
-import ru.itsphere.subscription.common.service.RegistrationService;
+import ru.itsphere.subscription.common.service.Repository;
+import ru.itsphere.subscription.domain.Client;
 
 public class ShowQRCodeActivity extends AppCompatActivity {
 
@@ -27,11 +30,33 @@ public class ShowQRCodeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_qrcode);
-        generateQRCode();
+        getClientInfoFromServerAndShowQRCode();
     }
 
-    private void generateQRCode() {
-        Client client = RegistrationService.getCurrentClient();
+    private void getClientInfoFromServerAndShowQRCode() {
+        new Repository().getCurrentUser().enqueue(new Callback<Client>() {
+            @Override
+            public void onResponse(Response<Client> response, Retrofit retrofit) {
+                Client client = response.body();
+                if (client == null) {
+                    Log.e(tag, "getCurrentUser returned null");
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.qr_error_getting_user_information), Toast.LENGTH_LONG).show();
+                } else {
+                    showQRCode(client);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.e(tag, "getCurrentUser has thrown: ", t);
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.qr_error_getting_user_information), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void showQRCode(Client client) {
         String data = new Gson().toJson(client);
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(data,
                 null,
@@ -45,7 +70,7 @@ public class ShowQRCodeActivity extends AppCompatActivity {
         } catch (WriterException e) {
             Log.e(tag, "QR code generating error:", e);
             Toast.makeText(getApplicationContext(),
-                    "QR code generating error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    getString(R.string.qr_error_generate_qr_code), Toast.LENGTH_LONG).show();
         }
     }
 

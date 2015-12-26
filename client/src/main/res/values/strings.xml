@@ -15,6 +15,7 @@
     <string name="prompt_reg_second_name">Second name</string>
     <string name="prompt_reg_phone_number">Phone number</string>
     <string name="action_reg_register">Send</string>
+    <string name="success_reg_registration_completed">Registration completed</string>
     <string name="error_reg_invalid_email">This email address is invalid</string>
     <string name="error_reg_field_required">This field is required</string>
     <string name="action_reg_registration">Registration</string>
@@ -22,9 +23,14 @@
         completions."
     </string>
 
+    <!-- Strings related to show startup activity -->
+    <string name="sa_error_getting_user_information">Can\'t get information from server</string>
+
     <!-- Strings related to show QR code -->
     <string name="title_activity_show_qrcode">Sharing personal information</string>
-    <string name="label_qr_warning">Please pay attention you are sharing your personal information now!</string>
+    <string name="qr_error_getting_user_information">Can\'t get information from server</string>
+    <string name="qr_error_generate_qr_code">QR code generating error</string>
+    <string name="qr_label_warning">Please pay attention you are sharing your personal information now!</string>
     <string name="title_activity_main">MainActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

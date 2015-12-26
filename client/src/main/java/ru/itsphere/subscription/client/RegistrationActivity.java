@@ -18,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,6 +28,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -35,8 +37,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
+import ru.itsphere.subscription.common.service.Repository;
 import ru.itsphere.subscription.domain.Client;
-import ru.itsphere.subscription.common.service.RegistrationService;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -45,6 +50,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class RegistrationActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
+    private static final String tag = RegistrationActivity.class.getName();
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -405,7 +411,20 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
             newClient.setFirstName(firstName);
             newClient.setSecondName(secondName);
             newClient.setPhone(phoneNumber);
-            RegistrationService.register(newClient);
+            new Repository().registerClient(newClient).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Response<Void> response, Retrofit retrofit) {
+                    String text = getString(R.string.success_reg_registration_completed);
+                    Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    String msg = "registerClient has thrown an exception: ";
+                    Log.e(tag, msg, t);
+                    Toast.makeText(getApplicationContext(), msg + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
             return true;
         }
 
