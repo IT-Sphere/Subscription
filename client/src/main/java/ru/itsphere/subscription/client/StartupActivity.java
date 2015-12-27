@@ -18,6 +18,7 @@ import ru.itsphere.subscription.domain.Client;
  */
 public class StartupActivity extends AppCompatActivity {
 
+    private static long CURRENT_USER_ID = 1;
     private static String tag = StartupActivity.class.getName();
 
     @Override
@@ -25,12 +26,12 @@ public class StartupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(tag, "Launched application...");
 
-        new Repository().getCurrentUser().enqueue(new Callback<Client>() {
+        new Repository().getClientById(CURRENT_USER_ID).enqueue(new Callback<Client>() {
             @Override
             public void onResponse(Response<Client> response, Retrofit retrofit) {
                 Class<? extends Activity> nextActivity = RegistrationActivity.class;
                 if (response.body() != null) {
-                    Log.d(tag, "The user already registered");
+                    Log.d(tag, String.format("The user (id: %d) already registered", CURRENT_USER_ID));
                     nextActivity = SubscriptionsListActivity.class;
                 }
                 Intent intent = new Intent(StartupActivity.this, nextActivity);
@@ -40,7 +41,7 @@ public class StartupActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Throwable t) {
-                Log.e(tag, "getCurrentUser has thrown: ", t);
+                Log.e(tag, String.format("getClientById (id: %d) has thrown: ", CURRENT_USER_ID), t);
                 Toast.makeText(getApplicationContext(),
                         getString(R.string.sa_error_getting_user_information), Toast.LENGTH_LONG).show();
             }

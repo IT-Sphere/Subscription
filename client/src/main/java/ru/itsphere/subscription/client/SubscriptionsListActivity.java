@@ -29,6 +29,7 @@ import ru.itsphere.subscription.domain.Subscription;
 public class SubscriptionsListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String tag = SubscriptionsListActivity.class.getName();
+    private static long CURRENT_USER_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +73,7 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
     }
 
     private void initSubscriptionsFromServer(final ListView subscriptionsView) {
-        new Repository().getAllSubscriptions().enqueue(new Callback<List<Subscription>>() {
+        new Repository().getSubscriptionsByClientId(CURRENT_USER_ID).enqueue(new Callback<List<Subscription>>() {
             @Override
             public void onResponse(Response<List<Subscription>> response, Retrofit retrofit) {
                 subscriptionsView.setAdapter(new SubscriptionAdapter(
@@ -84,7 +85,7 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
 
             @Override
             public void onFailure(Throwable t) {
-                String msg = "getAllSubscriptions with client: ";
+                String msg = "getSubscriptionsByClientId with client: ";
                 Log.e(tag, msg, t);
                 Toast.makeText(getApplicationContext(), msg + t.getMessage(), Toast.LENGTH_LONG).show();
             }

@@ -21,8 +21,6 @@ public class Repository {
     private SubscriptionServiceInvoker subscriptionServiceInvoker;
     private RegistrationServiceInvoker registrationServiceInvoker;
 
-    private static long CURRENT_USER_ID = 1;
-
     public Repository() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(SERVER_URL)
@@ -36,8 +34,7 @@ public class Repository {
         Log.i(tag, String.format("RegistrationServiceInvoker initialized with url %s", SERVER_URL));
     }
 
-    public Call<List<Subscription>> getAllSubscriptions() {
-        final long clientId = 0;
+    public Call<List<Subscription>> getSubscriptionsByClientId(long clientId) {
         return subscriptionServiceInvoker.list(clientId);
     }
 
@@ -45,11 +42,7 @@ public class Repository {
         return registrationServiceInvoker.register(newClient);
     }
 
-    public Call<Client> getClientById(long clientId) {
-        return registrationServiceInvoker.get(clientId);
-    }
-
-    public Call<Client> getCurrentUser() {
-        return registrationServiceInvoker.get(CURRENT_USER_ID);
+    public Call<Client> getClientById(long id) {
+        return registrationServiceInvoker.get(id);
     }
 }

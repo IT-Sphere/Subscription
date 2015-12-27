@@ -1,5 +1,7 @@
 package ru.itsphere.subscription.domain;
 
+import java.util.List;
+
 /**
  * Represents abstraction for client
  */
@@ -9,6 +11,7 @@ public class Client {
     private String secondName;
     private String email;
     private String phone;
+    private List<Subscription> subscriptions;
 
     public long getId() {
         return id;
@@ -48,5 +51,13 @@ public class Client {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public List<Subscription> getSubscriptions() {
+        return subscriptions;
+    }
+
+    public void setSubscriptions(List<Subscription> subscriptions) {
+        this.subscriptions = subscriptions;
     }
 }

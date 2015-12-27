@@ -170,6 +170,5 @@ public class DashboardActivity extends AppCompatActivity
             }
         });
         downloadDialog.show().show();
-        ;
     }
 }

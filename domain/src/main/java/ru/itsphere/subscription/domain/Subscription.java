@@ -6,6 +6,7 @@ package ru.itsphere.subscription.domain;
 public class Subscription {
     private long id;
     private String name;
+    private long clientId;
 
     public long getId() {
         return id;
@@ -21,5 +22,13 @@ public class Subscription {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(long clientId) {
+        this.clientId = clientId;
     }
 }

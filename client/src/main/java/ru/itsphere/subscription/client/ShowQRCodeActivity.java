@@ -25,6 +25,7 @@ import ru.itsphere.subscription.domain.Client;
 public class ShowQRCodeActivity extends AppCompatActivity {
 
     private static final String tag = ShowQRCodeActivity.class.getName();
+    private static long CURRENT_USER_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +35,12 @@ public class ShowQRCodeActivity extends AppCompatActivity {
     }
 
     private void getClientInfoFromServerAndShowQRCode() {
-        new Repository().getCurrentUser().enqueue(new Callback<Client>() {
+        new Repository().getClientById(CURRENT_USER_ID).enqueue(new Callback<Client>() {
             @Override
             public void onResponse(Response<Client> response, Retrofit retrofit) {
                 Client client = response.body();
                 if (client == null) {
-                    Log.e(tag, "getCurrentUser returned null");
+                    Log.e(tag, String.format("getClientById (id: %d) returned null", CURRENT_USER_ID));
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.qr_error_getting_user_information), Toast.LENGTH_LONG).show();
                 } else {
@@ -49,7 +50,7 @@ public class ShowQRCodeActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Throwable t) {
-                Log.e(tag, "getCurrentUser has thrown: ", t);
+                Log.e(tag, String.format("getClientById has thrown: ", CURRENT_USER_ID), t);
                 Toast.makeText(getApplicationContext(),
                         getString(R.string.qr_error_getting_user_information), Toast.LENGTH_LONG).show();
             }
