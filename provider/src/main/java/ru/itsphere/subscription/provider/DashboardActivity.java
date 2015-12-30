@@ -21,20 +21,50 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
+import ru.itsphere.subscription.common.service.Repository;
 import ru.itsphere.subscription.domain.Client;
-import ru.itsphere.subscription.common.service.RegistrationService;
+import ru.itsphere.subscription.domain.Organization;
 
 public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final String SERVER_URL = "http://192.168.43.98:8080";
     static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
     private static final String tag = DashboardActivity.class.getName();
+    public static int CURRENT_ORG_ID = 1;
     private FloatingActionButton scanButton;
+    private Organization currentOrganization;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        new Repository(SERVER_URL).getOrganizationById(CURRENT_ORG_ID).enqueue(new Callback<Organization>() {
+            @Override
+            public void onResponse(Response<Organization> response, Retrofit retrofit) {
+                currentOrganization = response.body();
+                if (currentOrganization == null) {
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.dash_error_organization_not_registered), Toast.LENGTH_LONG).show();
+                }
+                initActivity();
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.e(tag, String.format("getOrganizationById (id: %d) has thrown: ", CURRENT_ORG_ID), t);
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.dash_error_getting_organization_information), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void initActivity() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -125,8 +155,23 @@ public class DashboardActivity extends AppCompatActivity
             Log.e(tag, "Scan result is empty:");
             showTryAgainScanQRCodeDialog();
         } else {
-            Client newClient = new Gson().fromJson(scanResult, Client.class);
-            RegistrationService.registerNewClient(newClient);
+            final Client newClient = new Gson().fromJson(scanResult, Client.class);
+            new Repository(SERVER_URL).subscribeClientForOrganization(newClient, currentOrganization).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Response<Void> response, Retrofit retrofit) {
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.dash_message_subscription_added), Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    Log.e(tag, String.format("subscribeClientForOrganization (clientId: %d, orgId: %d) has thrown: ",
+                            newClient.getId(), currentOrganization.getId()), t);
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.dash_error_create_new_subscription), Toast.LENGTH_LONG).show();
+
+                }
+            });
         }
     }
 

@@ -411,7 +411,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
             newClient.setFirstName(firstName);
             newClient.setSecondName(secondName);
             newClient.setPhone(phoneNumber);
-            new Repository().registerClient(newClient).enqueue(new Callback<Void>() {
+            new Repository().createClient(newClient).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Response<Void> response, Retrofit retrofit) {
                     String text = getString(R.string.success_reg_registration_completed);
@@ -420,7 +420,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
 
                 @Override
                 public void onFailure(Throwable t) {
-                    String msg = "registerClient has thrown an exception: ";
+                    String msg = "createClient has thrown an exception: ";
                     Log.e(tag, msg, t);
                     Toast.makeText(getApplicationContext(), msg + t.getMessage(), Toast.LENGTH_LONG).show();
                 }

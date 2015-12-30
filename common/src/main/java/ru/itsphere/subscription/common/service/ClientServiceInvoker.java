@@ -10,11 +10,11 @@ import retrofit.http.Path;
 import ru.itsphere.subscription.domain.Client;
 
 /**
- * Responsible for actions related to the subscriptions
+ * Responsible for actions related to the clients
  */
-public interface RegistrationServiceInvoker {
+public interface ClientServiceInvoker {
     @PUT("/client")
-    Call<Void> register(@Body Client client);
+    Call<Void> create(@Body Client client);
 
     @GET("/client")
     Call<List<Client>> list();
