@@ -14,21 +14,15 @@ import ru.itsphere.subscription.domain.Subscription;
 /**
  * Responsible for access to the repository
  */
-public class Repository {
+public class Server {
 
-    public static final String DEFAULT_SERVER_URL = "http://10.0.2.2:8080";
-    private static final String tag = Repository.class.getName();
-
+    private static final String tag = Server.class.getName();
     private SubscriptionServiceInvoker subscriptionServiceInvoker;
     private ClientServiceInvoker clientServiceInvoker;
     private OrganizationServiceInvoker organizationServiceInvoker;
 
-    public Repository(String serverUrl) {
+    public Server(String serverUrl) {
         initRepository(serverUrl);
-    }
-
-    public Repository() {
-        initRepository(DEFAULT_SERVER_URL);
     }
 
     private String initRepository(String serverUrl) {
@@ -48,8 +42,8 @@ public class Repository {
         return serverUrl;
     }
 
-    public Call<List<Subscription>> getSubscriptionsByClientId(long clientId) {
-        return subscriptionServiceInvoker.list(clientId);
+    public Call<List<Subscription>> getClientSubscriptions(Client client) {
+        return subscriptionServiceInvoker.list(client.getId());
     }
 
     public Call<Void> createClient(Client newClient) {

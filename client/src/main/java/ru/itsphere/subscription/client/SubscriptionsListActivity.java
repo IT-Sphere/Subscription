@@ -23,18 +23,18 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 import ru.itsphere.subscription.client.adapter.SubscriptionAdapter;
-import ru.itsphere.subscription.common.service.Repository;
 import ru.itsphere.subscription.domain.Subscription;
 
 public class SubscriptionsListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String tag = SubscriptionsListActivity.class.getName();
-    private static long CURRENT_USER_ID = 1;
+    private ClientApplication context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subscriptions_list);
+        context = (ClientApplication) this.getApplicationContext();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -73,7 +73,7 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
     }
 
     private void initSubscriptionsFromServer(final ListView subscriptionsView) {
-        new Repository().getSubscriptionsByClientId(CURRENT_USER_ID).enqueue(new Callback<List<Subscription>>() {
+        context.getServer().getClientSubscriptions(context.getCurrentClient()).enqueue(new Callback<List<Subscription>>() {
             @Override
             public void onResponse(Response<List<Subscription>> response, Retrofit retrofit) {
                 subscriptionsView.setAdapter(new SubscriptionAdapter(
@@ -85,7 +85,7 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
 
             @Override
             public void onFailure(Throwable t) {
-                String msg = "getSubscriptionsByClientId with client: ";
+                String msg = "getClientSubscriptions with client: ";
                 Log.e(tag, msg, t);
                 Toast.makeText(getApplicationContext(), msg + t.getMessage(), Toast.LENGTH_LONG).show();
             }

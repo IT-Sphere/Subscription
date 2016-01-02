@@ -14,50 +14,25 @@ import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import ru.itsphere.subscription.client.qrcode.Contents;
 import ru.itsphere.subscription.client.qrcode.QRCodeEncoder;
-import ru.itsphere.subscription.common.service.Repository;
 import ru.itsphere.subscription.domain.Client;
 
 public class ShowQRCodeActivity extends AppCompatActivity {
 
     private static final String tag = ShowQRCodeActivity.class.getName();
-    private static long CURRENT_USER_ID = 1;
+    private ClientApplication context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_qrcode);
-        getClientInfoFromServerAndShowQRCode();
+        context = (ClientApplication) this.getApplicationContext();
+        showQRCode();
     }
 
-    private void getClientInfoFromServerAndShowQRCode() {
-        new Repository().getClientById(CURRENT_USER_ID).enqueue(new Callback<Client>() {
-            @Override
-            public void onResponse(Response<Client> response, Retrofit retrofit) {
-                Client client = response.body();
-                if (client == null) {
-                    Log.e(tag, String.format("getClientById (id: %d) returned null", CURRENT_USER_ID));
-                    Toast.makeText(getApplicationContext(),
-                            getString(R.string.qr_error_getting_user_information), Toast.LENGTH_LONG).show();
-                } else {
-                    showQRCode(client);
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.e(tag, String.format("getClientById has thrown: ", CURRENT_USER_ID), t);
-                Toast.makeText(getApplicationContext(),
-                        getString(R.string.qr_error_getting_user_information), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private void showQRCode(Client client) {
+    private void showQRCode() {
+        Client client = context.getCurrentClient();
         String data = new Gson().toJson(client);
         QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(data,
                 null,

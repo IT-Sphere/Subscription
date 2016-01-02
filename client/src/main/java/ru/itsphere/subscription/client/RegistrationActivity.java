@@ -40,7 +40,6 @@ import java.util.List;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-import ru.itsphere.subscription.common.service.Repository;
 import ru.itsphere.subscription.domain.Client;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -73,11 +72,13 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    private ClientApplication context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+        context = (ClientApplication) this.getApplicationContext();
         // Set up the registration form.
         emailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -411,7 +412,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
             newClient.setFirstName(firstName);
             newClient.setSecondName(secondName);
             newClient.setPhone(phoneNumber);
-            new Repository().createClient(newClient).enqueue(new Callback<Void>() {
+            context.getServer().createClient(newClient).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Response<Void> response, Retrofit retrofit) {
                     String text = getString(R.string.success_reg_registration_completed);
