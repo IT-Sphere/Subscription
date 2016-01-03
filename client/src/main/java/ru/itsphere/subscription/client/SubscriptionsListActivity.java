@@ -9,7 +9,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,9 +18,6 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import ru.itsphere.subscription.client.adapter.SubscriptionAdapter;
 import ru.itsphere.subscription.domain.Subscription;
 
@@ -73,23 +69,10 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
     }
 
     private void initSubscriptionsFromServer(final ListView subscriptionsView) {
-        context.getServer().getClientSubscriptions(context.getCurrentClient()).enqueue(new Callback<List<Subscription>>() {
-            @Override
-            public void onResponse(Response<List<Subscription>> response, Retrofit retrofit) {
-                subscriptionsView.setAdapter(new SubscriptionAdapter(
-                        SubscriptionsListActivity.this,
-                        android.R.layout.simple_list_item_1,
-                        android.R.id.text1,
-                        response.body()));
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                String msg = "getClientSubscriptions with client: ";
-                Log.e(tag, msg, t);
-                Toast.makeText(getApplicationContext(), msg + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+        subscriptionsView.setAdapter(new SubscriptionAdapter(
+                SubscriptionsListActivity.this,
+                android.R.layout.simple_list_item_1,
+                android.R.id.text1, context.getCurrentClient().getSubscriptions()));
     }
 
     @Override

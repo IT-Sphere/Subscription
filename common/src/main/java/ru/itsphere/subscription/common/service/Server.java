@@ -3,6 +3,9 @@ package ru.itsphere.subscription.common.service;
 import android.util.Log;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
@@ -26,9 +29,17 @@ public class Server {
     }
 
     private String initRepository(String serverUrl) {
+        ExecutorService exec = Executors.newSingleThreadExecutor(new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable runnable) {
+                return new Thread(runnable);
+            }
+        });
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(serverUrl)
                 .addConverterFactory(GsonConverterFactory.create())
+                .callbackExecutor(exec)
                 .build();
 
         subscriptionServiceInvoker = retrofit.create(SubscriptionServiceInvoker.class);
