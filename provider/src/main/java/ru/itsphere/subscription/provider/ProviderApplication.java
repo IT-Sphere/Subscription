@@ -5,7 +5,7 @@ import android.util.Log;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-import ru.itsphere.subscription.common.service.CommonApplication;
+import ru.itsphere.subscription.common.CommonApplication;
 import ru.itsphere.subscription.common.utils.BlockedField;
 import ru.itsphere.subscription.domain.Organization;
 

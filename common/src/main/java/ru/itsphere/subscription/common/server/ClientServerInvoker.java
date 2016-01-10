@@ -1,4 +1,4 @@
-package ru.itsphere.subscription.common.service;
+package ru.itsphere.subscription.common.server;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import ru.itsphere.subscription.domain.Client;
 /**
  * Responsible for actions related to the clients
  */
-public interface ClientServiceInvoker {
+public interface ClientServerInvoker {
     @PUT("/client")
     Call<Void> create(@Body Client client);
 

@@ -1,4 +1,4 @@
-package ru.itsphere.subscription.common.service;
+package ru.itsphere.subscription.common;
 
 import android.app.Application;
 import android.content.Context;
@@ -10,6 +10,11 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import java.net.InetAddress;
 
 import ru.itsphere.subscription.common.dao.DAOManager;
+import ru.itsphere.subscription.common.service.ClientService;
+import ru.itsphere.subscription.common.service.ClientServiceImpl;
+import ru.itsphere.subscription.common.service.OrganizationService;
+import ru.itsphere.subscription.common.server.Server;
+import ru.itsphere.subscription.common.service.OrganizationServiceImpl;
 
 /**
  * Abstract class for applications related to server

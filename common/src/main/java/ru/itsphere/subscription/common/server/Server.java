@@ -1,4 +1,4 @@
-package ru.itsphere.subscription.common.service;
+package ru.itsphere.subscription.common.server;
 
 import android.util.Log;
 
@@ -20,9 +20,9 @@ import ru.itsphere.subscription.domain.Subscription;
 public class Server {
 
     private static final String tag = Server.class.getName();
-    private SubscriptionServiceInvoker subscriptionServiceInvoker;
-    private ClientServiceInvoker clientServiceInvoker;
-    private OrganizationServiceInvoker organizationServiceInvoker;
+    private SubscriptionServerInvoker subscriptionServerInvoker;
+    private ClientServerInvoker clientServerInvoker;
+    private OrganizationServerInvoker organizationServerInvoker;
 
     public Server(String serverUrl) {
         initRepository(serverUrl);
@@ -42,27 +42,27 @@ public class Server {
                 .callbackExecutor(exec)
                 .build();
 
-        subscriptionServiceInvoker = retrofit.create(SubscriptionServiceInvoker.class);
-        Log.i(tag, String.format("SubscriptionServiceInvoker initialized with url %s", serverUrl));
+        subscriptionServerInvoker = retrofit.create(SubscriptionServerInvoker.class);
+        Log.i(tag, String.format("SubscriptionServerInvoker initialized with url %s", serverUrl));
 
-        clientServiceInvoker = retrofit.create(ClientServiceInvoker.class);
-        Log.i(tag, String.format("ClientServiceInvoker initialized with url %s", serverUrl));
+        clientServerInvoker = retrofit.create(ClientServerInvoker.class);
+        Log.i(tag, String.format("ClientServerInvoker initialized with url %s", serverUrl));
 
-        organizationServiceInvoker = retrofit.create(OrganizationServiceInvoker.class);
-        Log.i(tag, String.format("OrganizationServiceInvoker initialized with url %s", serverUrl));
+        organizationServerInvoker = retrofit.create(OrganizationServerInvoker.class);
+        Log.i(tag, String.format("OrganizationServerInvoker initialized with url %s", serverUrl));
         return serverUrl;
     }
 
     public Call<List<Subscription>> getClientSubscriptions(Client client) {
-        return subscriptionServiceInvoker.list(client.getId());
+        return subscriptionServerInvoker.list(client.getId());
     }
 
     public Call<Void> createClient(Client newClient) {
-        return clientServiceInvoker.create(newClient);
+        return clientServerInvoker.create(newClient);
     }
 
     public Call<Client> getClientById(long id) {
-        return clientServiceInvoker.get(id);
+        return clientServerInvoker.get(id);
     }
 
     public Call<Void> subscribeClientForOrganization(Client client, Organization organization) {
@@ -70,10 +70,10 @@ public class Server {
         subscription.setName("Subscription for " + organization.getName());
         subscription.setClientId(client.getId());
         subscription.setOrganizationId(organization.getId());
-        return subscriptionServiceInvoker.create(subscription);
+        return subscriptionServerInvoker.create(subscription);
     }
 
     public Call<Organization> getOrganizationById(int organizationId) {
-        return organizationServiceInvoker.get(organizationId);
+        return organizationServerInvoker.get(organizationId);
     }
 }

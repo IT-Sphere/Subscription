@@ -1,4 +1,4 @@
-package ru.itsphere.subscription.common.service;
+package ru.itsphere.subscription.common.server;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import ru.itsphere.subscription.domain.Organization;
 /**
  * Responsible for actions related to the organizations
  */
-public interface OrganizationServiceInvoker {
+public interface OrganizationServerInvoker {
     @PUT("/organization")
     Call<Void> create(@Body Organization organization);
 

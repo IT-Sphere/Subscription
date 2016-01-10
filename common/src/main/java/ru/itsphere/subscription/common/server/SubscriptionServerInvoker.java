@@ -1,4 +1,4 @@
-package ru.itsphere.subscription.common.service;
+package ru.itsphere.subscription.common.server;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import ru.itsphere.subscription.domain.Subscription;
 /**
  * Responsible for actions related to the subscriptions
  */
-public interface SubscriptionServiceInvoker {
+public interface SubscriptionServerInvoker {
     @GET("/subscription")
     Call<List<Subscription>> list(@Query("clientId") long clientId);
 
