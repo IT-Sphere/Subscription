@@ -138,17 +138,26 @@ public class DashboardActivity extends AppCompatActivity
             context.getServer().subscribeClientForOrganization(newClient, context.getCurrentOrganization()).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Response<Void> response, Retrofit retrofit) {
-                    Toast.makeText(getApplicationContext(),
-                            getString(R.string.dash_message_subscription_added), Toast.LENGTH_LONG).show();
+                    DashboardActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),
+                                    getString(R.string.dash_message_subscription_added), Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
 
                 @Override
                 public void onFailure(Throwable t) {
                     Log.e(tag, String.format("subscribeClientForOrganization (clientId: %d, orgId: %d) has thrown: ",
                             newClient.getId(), context.getCurrentOrganization().getId()), t);
-                    Toast.makeText(getApplicationContext(),
-                            getString(R.string.dash_error_create_new_subscription), Toast.LENGTH_LONG).show();
-
+                    DashboardActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),
+                                    getString(R.string.dash_error_create_new_subscription), Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             });
         }

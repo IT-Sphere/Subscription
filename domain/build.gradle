@@ -2,4 +2,6 @@ apply plugin: 'java'
 
 dependencies {
     compile 'org.hibernate:hibernate-entitymanager:4.1.7.Final'
+    compile 'com.j256.ormlite:ormlite-core:4.48'
+    compile 'com.j256.ormlite:ormlite-android:4.48'
 }

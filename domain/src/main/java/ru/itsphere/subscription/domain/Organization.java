@@ -1,12 +1,18 @@
 package ru.itsphere.subscription.domain;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 import java.util.List;
 
 /**
  * Represents abstraction for organization
  */
+@DatabaseTable
 public class Organization {
+    @DatabaseField(generatedId = true)
     private long id;
+    @DatabaseField
     private String name;
     private List<Subscription> subscriptions;
 

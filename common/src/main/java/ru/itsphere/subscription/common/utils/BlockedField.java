@@ -1,4 +1,4 @@
-package ru.itsphere.subscription.common.service;
+package ru.itsphere.subscription.common.utils;
 
 /**
  * When some thread invokes method 'get' it can be stopped,

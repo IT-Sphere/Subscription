@@ -1,12 +1,20 @@
 package ru.itsphere.subscription.domain;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 /**
  * Represents abstraction for client's subscriptions or organization's subscriptions
  */
+@DatabaseTable
 public class Subscription {
+    @DatabaseField(generatedId = true)
     private long id;
+    @DatabaseField
     private String name;
+    @DatabaseField
     private long clientId;
+    @DatabaseField
     private long organizationId;
 
     public long getId() {
