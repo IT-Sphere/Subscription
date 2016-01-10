@@ -1,4 +1,4 @@
-package ru.itsphere.subscription.client;
+package ru.itsphere.subscription.provider;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,16 +12,16 @@ import android.util.Log;
 public class StartupActivity extends AppCompatActivity {
 
     private static String tag = StartupActivity.class.getName();
-    private ClientApplication context;
+    private ProviderApplication context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = (ClientApplication) this.getApplicationContext();
+        context = (ProviderApplication) this.getApplicationContext();
         Class<? extends Activity> nextActivity = RegistrationActivity.class;
-        if (context.getCurrentClient() != null) {
-            Log.d(tag, String.format("The user (id: %d) already registered", context.getCurrentClient().getId()));
-            nextActivity = SubscriptionsListActivity.class;
+        if (context.getCurrentOrganization() != null) {
+            Log.d(tag, String.format("The organization (id: %d) already registered", context.getCurrentOrganization().getId()));
+            nextActivity = SubscribersListActivity.class;
         }
         Intent intent = new Intent(this, nextActivity);
         startActivity(intent);

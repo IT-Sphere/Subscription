@@ -61,6 +61,10 @@ public class Server {
         return clientServerInvoker.create(newClient);
     }
 
+    public Call<Void> createOrganization(Organization newOrganization) {
+        return organizationServerInvoker.create(newOrganization);
+    }
+
     public Call<Client> getClientById(long id) {
         return clientServerInvoker.get(id);
     }

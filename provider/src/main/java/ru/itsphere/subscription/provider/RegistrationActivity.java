@@ -1,4 +1,4 @@
-package ru.itsphere.subscription.client;
+package ru.itsphere.subscription.provider;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -40,7 +40,7 @@ import java.util.List;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-import ru.itsphere.subscription.domain.Client;
+import ru.itsphere.subscription.domain.Organization;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -62,7 +62,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
 
     // UI references.
     private AutoCompleteTextView emailView;
-    private EditText firstNameView;
+    private EditText nameView;
     private EditText secondNameView;
     private EditText phoneNumberView;
     private View progressView;
@@ -72,46 +72,19 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-    private ClientApplication context;
+    private ProviderApplication context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-        context = (ClientApplication) this.getApplicationContext();
-        // Set up the registration form.
-        emailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
+        context = (ProviderApplication) this.getApplicationContext();
 
-        firstNameView = (EditText) findViewById(R.id.first_name);
-        firstNameView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        nameView = (EditText) findViewById(R.id.name);
+        nameView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.first_name || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        secondNameView = (EditText) findViewById(R.id.second_name);
-        secondNameView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.second_name || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        phoneNumberView = (EditText) findViewById(R.id.phone_number);
-        phoneNumberView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.phone_number || id == EditorInfo.IME_NULL) {
+                if (id == R.id.name || id == EditorInfo.IME_NULL) {
                     attemptLogin();
                     return true;
                 }
@@ -188,47 +161,17 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
             return;
         }
 
-        // Reset errors.
-        emailView.setError(null);
-        firstNameView.setError(null);
-        secondNameView.setError(null);
-        phoneNumberView.setError(null);
+        nameView.setError(null);
 
         // Store values at the time of the registration attempt.
-        String email = emailView.getText().toString();
-        String firstName = firstNameView.getText().toString();
-        String secondName = secondNameView.getText().toString();
-        String phoneNumber = phoneNumberView.getText().toString();
+        String name = nameView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        if (TextUtils.isEmpty(firstName)) {
-            firstNameView.setError(getString(R.string.error_reg_field_required));
-            focusView = firstNameView;
-            cancel = true;
-        }
-
-        if (TextUtils.isEmpty(secondName)) {
-            secondNameView.setError(getString(R.string.error_reg_field_required));
-            focusView = secondNameView;
-            cancel = true;
-        }
-
-        if (TextUtils.isEmpty(phoneNumber)) {
-            phoneNumberView.setError(getString(R.string.error_reg_field_required));
-            focusView = phoneNumberView;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            emailView.setError(getString(R.string.error_reg_field_required));
-            focusView = emailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            emailView.setError(getString(R.string.error_reg_invalid_email));
-            focusView = emailView;
+        if (TextUtils.isEmpty(name)) {
+            nameView.setError(getString(R.string.error_reg_field_required));
+            focusView = nameView;
             cancel = true;
         }
 
@@ -240,14 +183,9 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            authTask = new UserRegistrationTask(email, firstName, secondName, phoneNumber);
+            authTask = new UserRegistrationTask(name);
             authTask.execute((Void) null);
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
     }
 
     /**
@@ -386,16 +324,10 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
      */
     public class UserRegistrationTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String email;
-        private final String firstName;
-        private final String secondName;
-        private final String phoneNumber;
+        private final String name;
 
-        UserRegistrationTask(String email, String firstName, String secondName, String phoneNumber) {
-            this.email = email;
-            this.firstName = firstName;
-            this.secondName = secondName;
-            this.phoneNumber = phoneNumber;
+        UserRegistrationTask(String name) {
+            this.name = name;
         }
 
         @Override
@@ -407,12 +339,9 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
                 return false;
             }
 
-            Client newClient = new Client();
-            newClient.setEmail(email);
-            newClient.setFirstName(firstName);
-            newClient.setSecondName(secondName);
-            newClient.setPhone(phoneNumber);
-            context.getServer().createClient(newClient).enqueue(new Callback<Void>() {
+            Organization newOrganization = new Organization();
+            newOrganization.setName(name);
+            context.getServer().createOrganization(newOrganization).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Response<Void> response, Retrofit retrofit) {
                     String text = getString(R.string.success_reg_registration_completed);
@@ -421,7 +350,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
 
                 @Override
                 public void onFailure(Throwable t) {
-                    String msg = "createClient has thrown an exception: ";
+                    String msg = "createOrganization has thrown an exception: ";
                     Log.e(tag, msg, t);
                     Toast.makeText(getApplicationContext(), msg + t.getMessage(), Toast.LENGTH_LONG).show();
                 }
@@ -435,12 +364,12 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
             showProgress(false);
 
             if (success) {
-                Intent intent = new Intent(RegistrationActivity.this, SubscriptionsListActivity.class);
+                Intent intent = new Intent(RegistrationActivity.this, SubscribersListActivity.class);
                 startActivity(intent);
                 finish();
             } else {
-                firstNameView.setError(getString(R.string.error_reg_field_required));
-                firstNameView.requestFocus();
+                nameView.setError(getString(R.string.error_reg_field_required));
+                nameView.requestFocus();
             }
         }
 

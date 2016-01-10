@@ -1,18 +1,34 @@
 <resources>
-    <!-- Strings related to DashboardActivity -->
-    <string name="app_name">Dashboard</string>
-    <string name="dash_scan_result_empty_dialog_title">Scan result is empty</string>
-    <string name="dash_scan_result_empty_dialog_message">The information is not received. Try again?</string>
-    <string name="dash_scan_result_empty_dialog_button_yes">Yes</string>
-    <string name="dash_scan_result_empty_dialog_button_no">No</string>
-    <string name="dash_download_qr_reader_dialog_title">"No Scanner Found"</string>
-    <string name="dash_download_qr_reader_dialog_message">"Download a scanner code?"</string>
-    <string name="dash_download_qr_reader_dialog_button_yes">Yes</string>
-    <string name="dash_download_qr_reader_dialog_button_no">No</string>
-    <string name="dash_error_getting_organization_information">Can\'t get information from server</string>
-    <string name="dash_error_organization_not_registered">Your organization wasn\'t registered</string>
-    <string name="dash_error_create_new_subscription">New subscription was NO added</string>
-    <string name="dash_message_subscription_added">New subscription was added</string>
+    <string name="app_name">Provider</string>
+
+    <!-- Strings related to registration-->
+    <string name="title_activity_registration">Registration</string>
+    <string name="prompt_reg_name">Name</string>
+    <string name="action_reg_register">Send</string>
+    <string name="success_reg_registration_completed">Registration completed</string>
+    <string name="error_reg_field_required">This field is required</string>
+    <string name="action_reg_registration">Registration</string>
+    <string name="permission_reg_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+
+    <!-- Strings related to subscribers list-->
+    <string name="title_activity_subscribers_list">Your subscribers</string>
+    <string name="title_activity_navigation_drawer">NavigationDrawer</string>
+    <string name="sub_navigation_drawer_open">Open navigation drawer</string>
+    <string name="sub_navigation_drawer_close">Close navigation drawer</string>
+    <string name="sub_scan_result_empty_dialog_title">Scan result is empty</string>
+    <string name="sub_scan_result_empty_dialog_message">The information is not received. Try again?</string>
+    <string name="sub_scan_result_empty_dialog_button_yes">Yes</string>
+    <string name="sub_scan_result_empty_dialog_button_no">No</string>
+    <string name="sub_download_qr_reader_dialog_title">"No Scanner Found"</string>
+    <string name="sub_download_qr_reader_dialog_message">"Download a scanner code?"</string>
+    <string name="sub_download_qr_reader_dialog_button_yes">Yes</string>
+    <string name="sub_download_qr_reader_dialog_button_no">No</string>
+    <string name="sub_error_getting_organization_information">Can\'t get information from server</string>
+    <string name="sub_error_organization_not_registered">Your organization wasn\'t registered</string>
+    <string name="sub_error_create_new_subscription">New subscriber was NO added</string>
+    <string name="sub_message_subscriber_added">New subscriber was added</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

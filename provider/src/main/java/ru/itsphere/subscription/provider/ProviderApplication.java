@@ -10,7 +10,7 @@ import ru.itsphere.subscription.common.utils.BlockedField;
 import ru.itsphere.subscription.domain.Organization;
 
 public class ProviderApplication extends CommonApplication {
-    public static final String SERVER_HOST = "192.168.43.98";
+    public static final String SERVER_HOST = "10.0.2.2";
     public static final String SERVER_URL = "http://" + SERVER_HOST + ":8080";
     private static final String tag = ProviderApplication.class.getName();
     public static int CURRENT_ORG_ID = 1;

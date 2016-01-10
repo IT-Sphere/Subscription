@@ -18,6 +18,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -26,24 +28,21 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 import ru.itsphere.subscription.domain.Client;
+import ru.itsphere.subscription.domain.Subscription;
+import ru.itsphere.subscription.provider.adapter.SubscribersAdapter;
 
-public class DashboardActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class SubscribersListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
-    private static final String tag = DashboardActivity.class.getName();
+    private static final String tag = SubscribersListActivity.class.getName();
     private FloatingActionButton scanButton;
     private ProviderApplication context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_subscribers_list);
         context = (ProviderApplication) this.getApplicationContext();
-        initActivity();
-    }
-
-    private void initActivity() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -51,12 +50,34 @@ public class DashboardActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.sub_navigation_drawer_open, R.string.sub_navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        createSubscribersView();
+    }
+
+    private void createSubscribersView() {
+        final ListView subscribersView = (ListView) findViewById(R.id.subscribers);
+        initSubscribersFromServer(subscribersView);
+        subscribersView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Subscription subscription = (Subscription) subscribersView.getItemAtPosition(position);
+                Toast.makeText(getApplicationContext(),
+                        "Position :" + position + "  ListItem : " + subscription.getName(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void initSubscribersFromServer(final ListView subscribersView) {
+        subscribersView.setAdapter(new SubscribersAdapter(
+                SubscribersListActivity.this,
+                android.R.layout.simple_list_item_1,
+                android.R.id.text1, context.getCurrentOrganization().getSubscriptions()));
     }
 
     @Override
@@ -72,7 +93,7 @@ public class DashboardActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.menu_subscribers_list, menu);
         return true;
     }
 
@@ -138,11 +159,11 @@ public class DashboardActivity extends AppCompatActivity
             context.getServer().subscribeClientForOrganization(newClient, context.getCurrentOrganization()).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Response<Void> response, Retrofit retrofit) {
-                    DashboardActivity.this.runOnUiThread(new Runnable() {
+                    SubscribersListActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Toast.makeText(getApplicationContext(),
-                                    getString(R.string.dash_message_subscription_added), Toast.LENGTH_LONG).show();
+                                    getString(R.string.sub_message_subscriber_added), Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -151,11 +172,11 @@ public class DashboardActivity extends AppCompatActivity
                 public void onFailure(Throwable t) {
                     Log.e(tag, String.format("subscribeClientForOrganization (clientId: %d, orgId: %d) has thrown: ",
                             newClient.getId(), context.getCurrentOrganization().getId()), t);
-                    DashboardActivity.this.runOnUiThread(new Runnable() {
+                    SubscribersListActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Toast.makeText(getApplicationContext(),
-                                    getString(R.string.dash_error_create_new_subscription), Toast.LENGTH_LONG).show();
+                                    getString(R.string.sub_error_create_new_subscription), Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -164,15 +185,15 @@ public class DashboardActivity extends AppCompatActivity
     }
 
     private void showTryAgainScanQRCodeDialog() {
-        AlertDialog.Builder tryAgainDialog = new AlertDialog.Builder(DashboardActivity.this);
-        tryAgainDialog.setTitle(R.string.dash_scan_result_empty_dialog_title);
-        tryAgainDialog.setMessage(R.string.dash_scan_result_empty_dialog_message);
-        tryAgainDialog.setPositiveButton(R.string.dash_scan_result_empty_dialog_button_yes, new DialogInterface.OnClickListener() {
+        AlertDialog.Builder tryAgainDialog = new AlertDialog.Builder(SubscribersListActivity.this);
+        tryAgainDialog.setTitle(R.string.sub_scan_result_empty_dialog_title);
+        tryAgainDialog.setMessage(R.string.sub_scan_result_empty_dialog_message);
+        tryAgainDialog.setPositiveButton(R.string.sub_scan_result_empty_dialog_button_yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
                 scanButton.performClick();
             }
         });
-        tryAgainDialog.setNegativeButton(R.string.dash_scan_result_empty_dialog_button_no, new DialogInterface.OnClickListener() {
+        tryAgainDialog.setNegativeButton(R.string.sub_scan_result_empty_dialog_button_no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
                 // do nothing
             }
@@ -181,15 +202,15 @@ public class DashboardActivity extends AppCompatActivity
     }
 
     private void showDownloadQRCodeReaderDialog() {
-        AlertDialog.Builder downloadDialog = new AlertDialog.Builder(DashboardActivity.this);
-        downloadDialog.setTitle(R.string.dash_download_qr_reader_dialog_title);
-        downloadDialog.setMessage(R.string.dash_download_qr_reader_dialog_message);
-        downloadDialog.setPositiveButton(R.string.dash_download_qr_reader_dialog_button_yes, new DialogInterface.OnClickListener() {
+        AlertDialog.Builder downloadDialog = new AlertDialog.Builder(SubscribersListActivity.this);
+        downloadDialog.setTitle(R.string.sub_download_qr_reader_dialog_title);
+        downloadDialog.setMessage(R.string.sub_download_qr_reader_dialog_message);
+        downloadDialog.setPositiveButton(R.string.sub_download_qr_reader_dialog_button_yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
                 Uri uri = Uri.parse("market://search?q=pname:com.google.zxing.client.android");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 try {
-                    DashboardActivity.this.startActivity(intent);
+                    SubscribersListActivity.this.startActivity(intent);
                 } catch (ActivityNotFoundException e) {
                     Log.e(tag, "Download QR code reade error:", e);
                     Toast.makeText(getApplicationContext(),
@@ -197,7 +218,7 @@ public class DashboardActivity extends AppCompatActivity
                 }
             }
         });
-        downloadDialog.setNegativeButton(R.string.dash_download_qr_reader_dialog_button_no, new DialogInterface.OnClickListener() {
+        downloadDialog.setNegativeButton(R.string.sub_download_qr_reader_dialog_button_no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
                 // do nothing
             }
