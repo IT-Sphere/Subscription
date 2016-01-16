@@ -1,4 +1,46 @@
+/**
+ * gradle bintrayUpload to publish artifact
+ */
+plugins {
+    id "com.jfrog.bintray" version "1.5"
+}
+group = 'ru.itsphere.subscription'
+version = '1.0'
+
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            groupId 'ru.itsphere.subscription'
+            artifactId 'domain-model'
+            version '1.0'
+        }
+    }
+}
+
+bintray {
+    user = 'aliaksandr-budnikau'
+    key = '3b4ccde026546f09873c0b38d362b6e4ce14ea42'
+    publications = ['MyPublication']
+    pkg {
+        repo = 'itchannel'
+        name = 'domain-model'
+        licenses = ['Apache-2.0']
+        //vcsUrl = 'htps://github.com/aliaksandr-budnikau/domain-model'
+        version {
+            name = '1.0'
+            desc = 'Domain model for Subscription app 1.0'
+        }
+    }
+}
+
 apply plugin: 'java'
+repositories {
+    jcenter()
+}
 
 dependencies {
     compile 'org.hibernate:hibernate-entitymanager:4.1.7.Final'
