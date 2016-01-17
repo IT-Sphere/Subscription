@@ -11,8 +11,8 @@ import ru.itsphere.subscription.domain.Client;
 
 public class ClientApplication extends CommonApplication {
 
-    public static final String SERVER_HOST = "10.0.2.2";
-    public static final String SERVER_URL = "http://" + SERVER_HOST + ":8080";
+    public static final String SERVER_HOST = "subscription-server.herokuapp.com";
+    public static final String SERVER_URL = "http://" + SERVER_HOST;
     private static final String tag = ClientApplication.class.getName();
     private static long CURRENT_USER_ID = 1;
 
