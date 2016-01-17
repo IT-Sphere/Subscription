@@ -3,6 +3,8 @@ package ru.itsphere.subscription.domain;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.Date;
+
 /**
  * Represents abstraction for client's subscriptions or organization's subscriptions
  */
@@ -16,6 +18,10 @@ public class Subscription {
     private long clientId;
     @DatabaseField
     private long organizationId;
+    @DatabaseField
+    private Date creationDate;
+    @DatabaseField
+    private int visitsNumber;
 
     public long getId() {
         return id;
@@ -47,5 +53,21 @@ public class Subscription {
 
     public void setOrganizationId(long organizationId) {
         this.organizationId = organizationId;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public int getVisitsNumber() {
+        return visitsNumber;
+    }
+
+    public void setVisitsNumber(int visitsNumber) {
+        this.visitsNumber = visitsNumber;
     }
 }
