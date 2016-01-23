@@ -2,9 +2,6 @@ package ru.itsphere.subscription.client;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -70,6 +68,8 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Subscription subscription = (Subscription) subscriptionsView.getItemAtPosition(position);
                 Call<Void> call = context.getServer().registerVisit(subscription);
+                ArrayAdapter adapter = (ArrayAdapter) subscriptionsView.getAdapter();
+                adapter.notifyDataSetChanged();
                 if (call == null) {
                     String msg = new StringBuilder()
                             .append("You have no visits to ")
