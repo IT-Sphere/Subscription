@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import ru.itsphere.subscription.client.R;
+import ru.itsphere.subscription.common.format.AppDateFormat;
 import ru.itsphere.subscription.domain.Subscription;
 
 public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
@@ -26,6 +27,8 @@ public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
 
             viewHolder = new ViewHolder();
             viewHolder.nameView = (TextView) convertView.findViewById(R.id.nameView);
+            viewHolder.purchaseDateView = (TextView) convertView.findViewById(R.id.purchaseDateView);
+            viewHolder.visitsNumberView = (TextView) convertView.findViewById(R.id.visitsNumberView);
 
             convertView.setTag(viewHolder);
         } else {
@@ -35,6 +38,8 @@ public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
         Subscription item = getItem(position);
         if (item != null) {
             viewHolder.nameView.setText(String.format("%s", item.getName()));
+            viewHolder.purchaseDateView.setText(AppDateFormat.formatDateWithHoursAndMinutes(item.getCreationDate()));
+            viewHolder.visitsNumberView.setText(String.valueOf(item.getVisitsNumber()));
         }
 
         return convertView;
@@ -42,5 +47,7 @@ public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
 
     private static class ViewHolder {
         private TextView nameView;
+        private TextView purchaseDateView;
+        private TextView visitsNumberView;
     }
 }

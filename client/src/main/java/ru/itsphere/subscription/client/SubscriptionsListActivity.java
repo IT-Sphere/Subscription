@@ -2,6 +2,9 @@ package ru.itsphere.subscription.client;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -9,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,9 +20,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.List;
-
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 import ru.itsphere.subscription.client.adapter.SubscriptionAdapter;
+import ru.itsphere.subscription.common.utils.ToastUtils;
 import ru.itsphere.subscription.domain.Subscription;
 
 public class SubscriptionsListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -61,9 +68,33 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
         subscriptionsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Subscription subscription = (Subscription) subscriptionsView.getItemAtPosition(position);
-                Toast.makeText(getApplicationContext(),
-                        "Position :" + position + "  ListItem : " + subscription.getName(), Toast.LENGTH_LONG).show();
+                final Subscription subscription = (Subscription) subscriptionsView.getItemAtPosition(position);
+                Call<Void> call = context.getServer().registerVisit(subscription);
+                if (call == null) {
+                    String msg = new StringBuilder()
+                            .append("You have no visits to ")
+                            .append(subscription.getName())
+                            .append(" anymore.").toString();
+                    ToastUtils.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG);
+                    return;
+                }
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Response<Void> response, Retrofit retrofit) {
+                        String msg = new StringBuilder()
+                                .append("Visit to ")
+                                .append(subscription.getName())
+                                .append(" was recorded.").toString();
+                        ToastUtils.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        String msg = "registerVisit has thrown an exception: ";
+                        Log.e(tag, msg, t);
+                        ToastUtils.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG);
+                    }
+                });
             }
         });
     }

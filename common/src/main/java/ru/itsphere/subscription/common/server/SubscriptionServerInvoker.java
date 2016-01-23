@@ -17,5 +17,8 @@ public interface SubscriptionServerInvoker {
     Call<List<Subscription>> list(@Query("clientId") long clientId);
 
     @PUT("/subscription")
-    Call<Void> create(@Body Subscription subscription);
+    Call<Void> save(@Body Subscription subscription);
+
+    @PUT("/subscription")
+    Call<Void> update(@Body Subscription subscription);
 }

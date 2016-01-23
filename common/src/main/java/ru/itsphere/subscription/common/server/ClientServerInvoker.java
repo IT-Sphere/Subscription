@@ -14,7 +14,7 @@ import ru.itsphere.subscription.domain.Client;
  */
 public interface ClientServerInvoker {
     @PUT("/client")
-    Call<Void> create(@Body Client client);
+    Call<Void> save(@Body Client client);
 
     @GET("/client")
     Call<List<Client>> list();

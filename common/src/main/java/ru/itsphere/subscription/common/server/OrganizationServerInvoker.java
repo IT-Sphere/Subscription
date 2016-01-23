@@ -14,7 +14,7 @@ import ru.itsphere.subscription.domain.Organization;
  */
 public interface OrganizationServerInvoker {
     @PUT("/organization")
-    Call<Void> create(@Body Organization organization);
+    Call<Void> save(@Body Organization organization);
 
     @GET("/organization")
     Call<List<Organization>> list();
