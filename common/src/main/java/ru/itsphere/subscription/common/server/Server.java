@@ -2,6 +2,7 @@ package ru.itsphere.subscription.common.server;
 
 import android.util.Log;
 
+import java.util.Date;
 import java.util.List;
 
 import retrofit.Call;
@@ -9,6 +10,7 @@ import retrofit.Retrofit;
 import ru.itsphere.subscription.domain.Client;
 import ru.itsphere.subscription.domain.Organization;
 import ru.itsphere.subscription.domain.Subscription;
+import ru.itsphere.subscription.domain.Visit;
 
 /**
  * Responsible for access to the repository
@@ -19,6 +21,7 @@ public class Server {
     private SubscriptionServerInvoker subscriptionServerInvoker;
     private ClientServerInvoker clientServerInvoker;
     private OrganizationServerInvoker organizationServerInvoker;
+    private VisitServerInvoker visitServerInvoker;
 
     public Server(String serverUrl) {
         initRepository(serverUrl);
@@ -35,6 +38,9 @@ public class Server {
 
         organizationServerInvoker = retrofit.create(OrganizationServerInvoker.class);
         Log.i(tag, String.format("OrganizationServerInvoker initialized with url %s", serverUrl));
+
+        visitServerInvoker = retrofit.create(VisitServerInvoker.class);
+        Log.i(tag, String.format("VisitServerInvoker initialized with url %s", serverUrl));
         return serverUrl;
     }
 
@@ -70,7 +76,12 @@ public class Server {
         int visitsNumber = subscription.getVisitsNumber();
         if (visitsNumber > 0) {
             visitsNumber--;
+            Visit visit = new Visit();
+            visit.setStartDate(new Date());
+            visit.setEndDate(new Date());
+            visit.setSubscriptionId(subscription.getId());
             subscription.setVisitsNumber(visitsNumber);
+            subscription.getVisits().add(visit);
             return subscriptionServerInvoker.save(subscription);
         }
         return null;
