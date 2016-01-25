@@ -3,7 +3,7 @@ package ru.itsphere.subscription.domain;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Represents abstraction for client
@@ -20,7 +20,7 @@ public class Client {
     private String email;
     @DatabaseField
     private String phone;
-    private List<Subscription> subscriptions;
+    private Set<Subscription> subscriptions;
 
     public long getId() {
         return id;
@@ -62,11 +62,11 @@ public class Client {
         this.phone = phone;
     }
 
-    public List<Subscription> getSubscriptions() {
+    public Set<Subscription> getSubscriptions() {
         return subscriptions;
     }
 
-    public void setSubscriptions(List<Subscription> subscriptions) {
+    public void setSubscriptions(Set<Subscription> subscriptions) {
         this.subscriptions = subscriptions;
     }
 }

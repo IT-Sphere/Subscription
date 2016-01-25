@@ -4,7 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Represents abstraction for client's subscriptions or organization's subscriptions
@@ -23,7 +23,7 @@ public class Subscription {
     private Date creationDate;
     @DatabaseField
     private int visitsNumber;
-    private List<Visit> visits;
+    private Set<Visit> visits;
 
     public long getId() {
         return id;
@@ -73,11 +73,11 @@ public class Subscription {
         this.visitsNumber = visitsNumber;
     }
 
-    public List<Visit> getVisits() {
+    public Set<Visit> getVisits() {
         return visits;
     }
 
-    public void setVisits(List<Visit> visits) {
+    public void setVisits(Set<Visit> visits) {
         this.visits = visits;
     }
 }

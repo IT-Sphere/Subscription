@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Subscriptions App</string>
     <string name="action_settings">Settings</string>
+    <string name="action_clean_db">Drop DB</string>
+    <string name="action_refresh_data_from_server">Update from server</string>
 
     <!-- Strings related to subscription list-->
     <string name="title_activity_subscription_list">Your subscriptions</string>

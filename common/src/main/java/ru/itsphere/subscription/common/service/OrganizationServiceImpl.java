@@ -1,5 +1,6 @@
 package ru.itsphere.subscription.common.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -20,7 +21,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         Organization organization = daoManager.getOrganizationDao().queryForId((int) id);
         if (eager) {
             List<Subscription> subscriptions = daoManager.getSubscriptionDao().queryForEq("organizationId", id);
-            organization.setSubscriptions(subscriptions);
+            organization.setSubscriptions(new HashSet<>(subscriptions));
         }
         return organization;
     }

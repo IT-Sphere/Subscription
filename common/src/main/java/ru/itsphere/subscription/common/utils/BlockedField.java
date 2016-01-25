@@ -28,4 +28,10 @@ public class BlockedField<C> {
         initialized = true;
         notifyAll();
     }
+
+    public synchronized void clear() {
+        initialized = false;
+        field = null;
+    }
+
 }

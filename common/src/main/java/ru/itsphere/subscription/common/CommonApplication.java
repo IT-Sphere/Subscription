@@ -10,10 +10,12 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import java.net.InetAddress;
 
 import ru.itsphere.subscription.common.dao.DAOManager;
+import ru.itsphere.subscription.common.server.Server;
+import ru.itsphere.subscription.common.service.ApplicationService;
+import ru.itsphere.subscription.common.service.ApplicationServiceImpl;
 import ru.itsphere.subscription.common.service.ClientService;
 import ru.itsphere.subscription.common.service.ClientServiceImpl;
 import ru.itsphere.subscription.common.service.OrganizationService;
-import ru.itsphere.subscription.common.server.Server;
 import ru.itsphere.subscription.common.service.OrganizationServiceImpl;
 
 /**
@@ -25,6 +27,7 @@ public abstract class CommonApplication extends Application {
     private Server server;
     private ClientService clientService;
     private OrganizationService organizationService;
+    private ApplicationService applicationService;
     private DAOManager DAOManager;
 
     protected abstract String getServerUrl();
@@ -39,6 +42,7 @@ public abstract class CommonApplication extends Application {
         DAOManager = OpenHelperManager.getHelper(this, DAOManager.class);
         clientService = new ClientServiceImpl(DAOManager);
         organizationService = new OrganizationServiceImpl(DAOManager);
+        applicationService = new ApplicationServiceImpl(DAOManager);
     }
 
     public Server getServer() {
@@ -62,6 +66,10 @@ public abstract class CommonApplication extends Application {
 
     public OrganizationService getOrganizationService() {
         return organizationService;
+    }
+
+    public ApplicationService getApplicationService() {
+        return applicationService;
     }
 
     public boolean isNetworkConnected() {

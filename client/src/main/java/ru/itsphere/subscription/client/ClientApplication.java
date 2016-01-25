@@ -42,8 +42,9 @@ public class ClientApplication extends CommonApplication {
         currentClient.set(client);
     }
 
-    private void initDataFromServer() {
+    public void initDataFromServer() {
         Log.i(tag, "Getting client by id from server started...");
+        currentClient.clear();
         getServer().getClientById(CURRENT_USER_ID).enqueue(new Callback<Client>() {
             @Override
             public void onResponse(Response<Client> response, Retrofit retrofit) {

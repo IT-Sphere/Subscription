@@ -18,6 +18,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -30,12 +33,16 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
 
     private static final String tag = SubscriptionsListActivity.class.getName();
     private ClientApplication context;
+    private ListView subscriptionsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subscriptions_list);
+
+        subscriptionsView = (ListView) findViewById(R.id.subscriptions);
         context = (ClientApplication) this.getApplicationContext();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -61,8 +68,7 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
     }
 
     private void createSubscriptionsView() {
-        final ListView subscriptionsView = (ListView) findViewById(R.id.subscriptions);
-        initSubscriptionsFromServer(subscriptionsView);
+        refreshSubscriptionsView();
         subscriptionsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -99,11 +105,12 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
         });
     }
 
-    private void initSubscriptionsFromServer(final ListView subscriptionsView) {
+    private void refreshSubscriptionsView() {
+        Set<Subscription> subscriptions = context.getCurrentClient().getSubscriptions();
         subscriptionsView.setAdapter(new SubscriptionAdapter(
-                SubscriptionsListActivity.this,
+                this,
                 android.R.layout.simple_list_item_1,
-                android.R.id.text1, context.getCurrentClient().getSubscriptions()));
+                android.R.id.text1, new ArrayList<>(subscriptions)));
     }
 
     @Override
@@ -133,6 +140,12 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_clean_db) {
+            context.getApplicationService().cleanDataBase();
+            return true;
+        } else if (id == R.id.action_refresh_data_from_server) {
+            context.initDataFromServer();
+            refreshSubscriptionsView();
         }
 
         return super.onOptionsItemSelected(item);

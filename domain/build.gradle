@@ -16,7 +16,7 @@ publishing {
             from components.java
             groupId 'ru.itsphere.subscription'
             artifactId 'domain-model'
-            version '1.0.3'
+            version '1.0.4'
         }
     }
 }

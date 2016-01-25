@@ -1,5 +1,6 @@
 package ru.itsphere.subscription.common.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -18,9 +19,9 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Client getClientById(long id, boolean eager) {
         Client client = daoManager.getClientDao().queryForId((int) id);
-        if (eager) {
+        if (client != null && eager) {
             List<Subscription> subscriptions = daoManager.getSubscriptionDao().queryForEq("clientId", id);
-            client.setSubscriptions(subscriptions);
+            client.setSubscriptions(new HashSet<>(subscriptions));
         }
         return client;
     }

@@ -3,7 +3,7 @@ package ru.itsphere.subscription.domain;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Represents abstraction for organization
@@ -14,7 +14,7 @@ public class Organization {
     private long id;
     @DatabaseField
     private String name;
-    private List<Subscription> subscriptions;
+    private Set<Subscription> subscriptions;
 
     public long getId() {
         return id;
@@ -32,11 +32,11 @@ public class Organization {
         this.name = name;
     }
 
-    public List<Subscription> getSubscriptions() {
+    public Set<Subscription> getSubscriptions() {
         return subscriptions;
     }
 
-    public void setSubscriptions(List<Subscription> subscriptions) {
+    public void setSubscriptions(Set<Subscription> subscriptions) {
         this.subscriptions = subscriptions;
     }
 }
