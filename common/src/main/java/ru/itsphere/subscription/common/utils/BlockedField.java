@@ -9,7 +9,7 @@ package ru.itsphere.subscription.common.utils;
  * Field can be null.
  */
 public class BlockedField<C> {
-    private C field;
+    private C value;
     private boolean initialized = false;
 
     public synchronized C get() {
@@ -20,18 +20,18 @@ public class BlockedField<C> {
                 // do nothing!
             }
         }
-        return field;
+        return value;
     }
 
-    public synchronized void set(C field) {
-        this.field = field;
+    public synchronized void set(C value) {
+        this.value = value;
         initialized = true;
         notifyAll();
     }
 
     public synchronized void clear() {
         initialized = false;
-        field = null;
+        value = null;
     }
 
 }

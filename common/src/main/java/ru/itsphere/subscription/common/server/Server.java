@@ -72,17 +72,13 @@ public class Server {
         return organizationServerInvoker.get(organizationId);
     }
 
-    public Call<Void> registerVisit(Subscription subscription) {
-        int visitsNumber = subscription.getVisitsNumber();
-        if (visitsNumber > 0) {
-            visitsNumber--;
+    public Call<Visit> registerVisit(Subscription subscription) {
+        if (subscription.getVisitsNumber() > subscription.getVisits().size()) {
             Visit visit = new Visit();
             visit.setStartDate(new Date());
             visit.setEndDate(new Date());
             visit.setSubscriptionId(subscription.getId());
-            subscription.setVisitsNumber(visitsNumber);
-            subscription.getVisits().add(visit);
-            return subscriptionServerInvoker.save(subscription);
+            return visitServerInvoker.save(visit);
         }
         return null;
     }

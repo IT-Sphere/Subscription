@@ -14,7 +14,7 @@ import ru.itsphere.subscription.domain.Visit;
  */
 public interface VisitServerInvoker {
     @PUT("/visit")
-    Call<Void> save(@Body Visit visit);
+    Call<Visit> save(@Body Visit visit);
 
     @GET("/visit")
     Call<List<Visit>> list(@Query("subscriptionId") long subscriptionId);

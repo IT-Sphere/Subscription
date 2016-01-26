@@ -2,6 +2,8 @@ package ru.itsphere.subscription.client;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,7 +21,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.Observable;
+import java.util.Observer;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -27,9 +30,11 @@ import retrofit.Response;
 import retrofit.Retrofit;
 import ru.itsphere.subscription.client.adapter.SubscriptionAdapter;
 import ru.itsphere.subscription.common.utils.ToastUtils;
+import ru.itsphere.subscription.domain.Client;
 import ru.itsphere.subscription.domain.Subscription;
+import ru.itsphere.subscription.domain.Visit;
 
-public class SubscriptionsListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class SubscriptionsListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Observer {
 
     private static final String tag = SubscriptionsListActivity.class.getName();
     private ClientApplication context;
@@ -39,9 +44,8 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subscriptions_list);
-
-        subscriptionsView = (ListView) findViewById(R.id.subscriptions);
         context = (ClientApplication) this.getApplicationContext();
+        context.registerObserverForCurrentClient(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -68,12 +72,15 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
     }
 
     private void createSubscriptionsView() {
-        refreshSubscriptionsView();
+        subscriptionsView = (ListView) findViewById(R.id.subscriptions);
+        subscriptionsView.setAdapter(new SubscriptionAdapter(
+                this, android.R.layout.simple_list_item_1,
+                android.R.id.text1, new ArrayList<>(context.getCurrentClient().getSubscriptions())));
         subscriptionsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Subscription subscription = (Subscription) subscriptionsView.getItemAtPosition(position);
-                Call<Void> call = context.getServer().registerVisit(subscription);
+                Call<Visit> call = context.getServer().registerVisit(subscription);
                 ArrayAdapter adapter = (ArrayAdapter) subscriptionsView.getAdapter();
                 adapter.notifyDataSetChanged();
                 if (call == null) {
@@ -84,9 +91,10 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
                     ToastUtils.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG);
                     return;
                 }
-                call.enqueue(new Callback<Void>() {
+                call.enqueue(new Callback<Visit>() {
                     @Override
-                    public void onResponse(Response<Void> response, Retrofit retrofit) {
+                    public void onResponse(Response<Visit> response, Retrofit retrofit) {
+                        addVisitToSubscription(response);
                         String msg = new StringBuilder()
                                 .append("Visit to ")
                                 .append(subscription.getName())
@@ -105,12 +113,14 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
         });
     }
 
-    private void refreshSubscriptionsView() {
-        Set<Subscription> subscriptions = context.getCurrentClient().getSubscriptions();
-        subscriptionsView.setAdapter(new SubscriptionAdapter(
-                this,
-                android.R.layout.simple_list_item_1,
-                android.R.id.text1, new ArrayList<>(subscriptions)));
+    private void addVisitToSubscription(Response<Visit> response) {
+        Visit visit = response.body();
+        for (Subscription sub: context.getCurrentClient().getSubscriptions()) {
+            if (sub.getId() == visit.getSubscriptionId()) {
+                sub.getVisits().add(visit);
+                return;
+            }
+        }
     }
 
     @Override
@@ -145,7 +155,6 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
             return true;
         } else if (id == R.id.action_refresh_data_from_server) {
             context.initDataFromServer();
-            refreshSubscriptionsView();
         }
 
         return super.onOptionsItemSelected(item);
@@ -174,5 +183,22 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void update(Observable observable, final Object data) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                createOrRefreshSubscriptionsView((Client) data);
+            }
+        });
+    }
+
+    private void createOrRefreshSubscriptionsView(Client client) {
+        SubscriptionAdapter adapter = new SubscriptionAdapter(
+                this, android.R.layout.simple_list_item_1,
+                android.R.id.text1, new ArrayList<>(client.getSubscriptions()));
+        subscriptionsView.setAdapter(adapter);
     }
 }

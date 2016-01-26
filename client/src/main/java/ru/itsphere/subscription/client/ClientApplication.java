@@ -2,11 +2,13 @@ package ru.itsphere.subscription.client;
 
 import android.util.Log;
 
+import java.util.Observer;
+
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-import ru.itsphere.subscription.common.utils.BlockedField;
 import ru.itsphere.subscription.common.CommonApplication;
+import ru.itsphere.subscription.common.utils.ObservableField;
 import ru.itsphere.subscription.domain.Client;
 
 public class ClientApplication extends CommonApplication {
@@ -16,7 +18,7 @@ public class ClientApplication extends CommonApplication {
     private static final String tag = ClientApplication.class.getName();
     private static long CURRENT_USER_ID = 1;
 
-    private BlockedField<Client> currentClient = new BlockedField<>();
+    private ObservableField<Client> currentClient = new ObservableField<>();
 
     @Override
     public void onCreate() {
@@ -34,6 +36,10 @@ public class ClientApplication extends CommonApplication {
         }).start();
     }
 
+    public void registerObserverForCurrentClient(Observer observer) {
+        currentClient.addObserver(observer);
+    }
+
     private void initDataFromDatabase() {
         Log.i(tag, "Getting client by id from db started...");
         Client client = getClientService().getClientById(CURRENT_USER_ID, true);
@@ -44,7 +50,6 @@ public class ClientApplication extends CommonApplication {
 
     public void initDataFromServer() {
         Log.i(tag, "Getting client by id from server started...");
-        currentClient.clear();
         getServer().getClientById(CURRENT_USER_ID).enqueue(new Callback<Client>() {
             @Override
             public void onResponse(Response<Client> response, Retrofit retrofit) {
