@@ -76,10 +76,14 @@ public class Server {
         if (subscription.getVisitsNumber() > subscription.getVisits().size()) {
             Visit visit = new Visit();
             visit.setStartDate(new Date());
-            visit.setEndDate(new Date());
             visit.setSubscriptionId(subscription.getId());
             return visitServerInvoker.save(visit);
         }
         return null;
+    }
+
+    public Call<Visit> finishVisit(Visit visit) {
+        visit.setEndDate(new Date());
+        return visitServerInvoker.save(visit);
     }
 }

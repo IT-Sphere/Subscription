@@ -9,6 +9,8 @@
     <string name="title_activity_navigation_drawer">NavigationDrawer</string>
     <string name="sub_navigation_drawer_open">Open navigation drawer</string>
     <string name="sub_navigation_drawer_close">Close navigation drawer</string>
+    <string name="sub_visit_progress_start">Visit is in progress...</string>
+    <string name="sub_visit_progress_end">"Visit is ended"</string>
 
     <!-- Strings related to registration-->
     <string name="title_activity_registration">Registration</string>

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -26,6 +27,8 @@ public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
                     .inflate(R.layout.listview_subscription, parent, false);
 
             viewHolder = new ViewHolder();
+            viewHolder.progressBar = (ProgressBar) convertView.findViewById(R.id.progressBar);
+            viewHolder.progressBar.setVisibility(View.INVISIBLE);
             viewHolder.nameView = (TextView) convertView.findViewById(R.id.nameView);
             viewHolder.purchaseDateView = (TextView) convertView.findViewById(R.id.purchaseDateView);
             viewHolder.visitsNumberView = (TextView) convertView.findViewById(R.id.visitsNumberView);
@@ -46,6 +49,7 @@ public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
     }
 
     private static class ViewHolder {
+        private ProgressBar progressBar;
         private TextView nameView;
         private TextView purchaseDateView;
         private TextView visitsNumberView;
