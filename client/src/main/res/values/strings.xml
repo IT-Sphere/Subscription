@@ -37,7 +37,7 @@
     <string name="qr_label_warning">Please pay attention you are sharing your personal information now!</string>
     <string name="title_activity_main">MainActivity</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <!-- Strings related to visit list-->
+    <string name="title_activity_visits_list">Visits</string>
 
 </resources>

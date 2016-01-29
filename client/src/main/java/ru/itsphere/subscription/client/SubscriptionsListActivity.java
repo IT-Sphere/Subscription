@@ -61,7 +61,7 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_subscription_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.sub_navigation_drawer_open, R.string.sub_navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -200,7 +200,7 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_subscription_drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -255,7 +255,7 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_subscription_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -265,12 +265,12 @@ public class SubscriptionsListActivity extends AppCompatActivity implements Navi
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                createOrRefreshSubscriptionsView((Client) data);
+                refreshSubscriptionsView((Client) data);
             }
         });
     }
 
-    private void createOrRefreshSubscriptionsView(Client client) {
+    private void refreshSubscriptionsView(Client client) {
         SubscriptionAdapter adapter = new SubscriptionAdapter(
                 this, android.R.layout.simple_list_item_1,
                 android.R.id.text1, new ArrayList<>(client.getSubscriptions()));

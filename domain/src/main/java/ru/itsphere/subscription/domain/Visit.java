@@ -3,13 +3,14 @@ package ru.itsphere.subscription.domain;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Represents abstraction for subscription's visits
  */
 @DatabaseTable
-public class Visit {
+public class Visit implements Serializable {
     @DatabaseField(generatedId = true)
     private long id;
     @DatabaseField
