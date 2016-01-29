@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,6 +26,10 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
+
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
@@ -31,11 +37,12 @@ import ru.itsphere.subscription.domain.Client;
 import ru.itsphere.subscription.domain.Subscription;
 import ru.itsphere.subscription.provider.adapter.SubscribersAdapter;
 
-public class SubscribersListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class SubscribersListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Observer {
 
     static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
     private static final String tag = SubscribersListActivity.class.getName();
     private FloatingActionButton scanButton;
+    private ListView subscribersView;
     private ProviderApplication context;
 
     @Override
@@ -45,6 +52,7 @@ public class SubscribersListActivity extends AppCompatActivity implements Naviga
         context = (ProviderApplication) this.getApplicationContext();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        context.registerObserverForCurrentOrganization(this);
 
         scanButton = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -61,8 +69,10 @@ public class SubscribersListActivity extends AppCompatActivity implements Naviga
     }
 
     private void createSubscribersView() {
-        final ListView subscribersView = (ListView) findViewById(R.id.subscribers);
-        initSubscribersFromServer(subscribersView);
+        subscribersView = (ListView) findViewById(R.id.subscribers);
+        subscribersView.setAdapter(new SubscribersAdapter(
+                this, android.R.layout.simple_list_item_1,
+                android.R.id.text1, new ArrayList<>(context.getCurrentOrganization().getSubscriptions())));
         subscribersView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -71,13 +81,6 @@ public class SubscribersListActivity extends AppCompatActivity implements Naviga
                         "Position :" + position + "  ListItem : " + subscription.getName(), Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    private void initSubscribersFromServer(final ListView subscribersView) {
-        subscribersView.setAdapter(new SubscribersAdapter(
-                SubscribersListActivity.this,
-                android.R.layout.simple_list_item_1,
-                android.R.id.text1, context.getCurrentOrganization().getSubscriptions()));
     }
 
     @Override
@@ -224,5 +227,22 @@ public class SubscribersListActivity extends AppCompatActivity implements Naviga
             }
         });
         downloadDialog.show().show();
+    }
+
+    @Override
+    public void update(Observable observable, final Object data) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                createOrRefreshSubscriptionsView((Client) data);
+            }
+        });
+    }
+
+    private void createOrRefreshSubscriptionsView(Client client) {
+        SubscribersAdapter adapter = new SubscribersAdapter(
+                this, android.R.layout.simple_list_item_1,
+                android.R.id.text1, new ArrayList<>(client.getSubscriptions()));
+        subscribersView.setAdapter(adapter);
     }
 }

@@ -2,11 +2,13 @@ package ru.itsphere.subscription.provider;
 
 import android.util.Log;
 
+import java.util.Observer;
+
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 import ru.itsphere.subscription.common.CommonApplication;
-import ru.itsphere.subscription.common.utils.BlockedField;
+import ru.itsphere.subscription.common.utils.ObservableField;
 import ru.itsphere.subscription.domain.Organization;
 
 public class ProviderApplication extends CommonApplication {
@@ -15,7 +17,7 @@ public class ProviderApplication extends CommonApplication {
     private static final String tag = ProviderApplication.class.getName();
     public static int CURRENT_ORG_ID = 1;
 
-    private BlockedField<Organization> currentOrganization = new BlockedField<>();
+    private ObservableField<Organization> currentOrganization = new ObservableField<>();
 
     @Override
     public void onCreate() {
@@ -31,6 +33,10 @@ public class ProviderApplication extends CommonApplication {
                 }
             }
         }).start();
+    }
+
+    public void registerObserverForCurrentOrganization(Observer observer) {
+        currentOrganization.addObserver(observer);
     }
 
     private void initDataFromDatabase() {
