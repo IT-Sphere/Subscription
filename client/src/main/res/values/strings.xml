@@ -40,4 +40,8 @@
     <!-- Strings related to visit list-->
     <string name="title_activity_visits_list">Visits</string>
 
+    <!-- Strings related to subscription adapter-->
+    <string name="show_history">History</string>
+    <string name="start_visit">Start</string>
+
 </resources>

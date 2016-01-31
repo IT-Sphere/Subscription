@@ -36,8 +36,14 @@ public class VisitAdapter extends ArrayAdapter<Visit> {
 
         Visit item = getItem(position);
         if (item != null) {
-            viewHolder.startDateView.setText(AppDateFormat.formatDateWithHoursAndMinutes(item.getStartDate()));
-            viewHolder.endDateView.setText(AppDateFormat.formatDateWithHoursAndMinutes(item.getEndDate()));
+            viewHolder.startDateView.setText(
+                    item.getStartDate() == null ? "in progress..."
+                            : AppDateFormat.formatDateWithHoursAndMinutes(item.getStartDate())
+            );
+            viewHolder.endDateView.setText(
+                    item.getEndDate() == null ? "in progress..."
+                            : AppDateFormat.formatDateWithHoursAndMinutes(item.getEndDate())
+            );
         }
 
         return convertView;

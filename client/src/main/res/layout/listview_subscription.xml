@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
-    android:orientation="vertical">
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -19,27 +19,41 @@
         android:id="@+id/nameView"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:layout_marginLeft="32dp"
-        android:gravity="left" />
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/progressBar"
+        android:layout_marginLeft="12dp" />
 
     <TextView
         android:id="@+id/purchaseDateView"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:layout_marginLeft="32dp"
-        android:gravity="left" />
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/nameView"
+        android:layout_marginLeft="12dp" />
 
     <TextView
         android:id="@+id/visitsNumberView"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:layout_marginLeft="32dp"
-        android:gravity="left" />
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/progressBar"
+        android:layout_marginRight="12dp" />
 
-    <ImageButton
+    <Button
         android:id="@+id/showVisitsButton"
+        android:width="12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="showVisits"
-        android:src="@drawable/ic_menu_send" />
-</LinearLayout>
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/purchaseDateView"
+        android:layout_marginTop="20dp"
+        android:text="@string/show_history" />
+
+    <Button
+        android:id="@+id/startNewVisitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_visit"
+        android:layout_alignBottom="@+id/showVisitsButton" />
+
+</RelativeLayout>
