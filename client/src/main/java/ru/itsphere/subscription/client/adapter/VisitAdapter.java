@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -20,18 +19,16 @@ public class VisitAdapter extends ArrayAdapter<Visit> {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
+        VisitAdapterItemViewHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(this.getContext())
                     .inflate(R.layout.listview_visit, parent, false);
 
-            viewHolder = new ViewHolder();
-            viewHolder.startDateView = (TextView) convertView.findViewById(R.id.startDateView);
-            viewHolder.endDateView = (TextView) convertView.findViewById(R.id.endDateView);
+            viewHolder = new VisitAdapterItemViewHolder(convertView);
 
             convertView.setTag(viewHolder);
         } else {
-            viewHolder = (ViewHolder) convertView.getTag();
+            viewHolder = (VisitAdapterItemViewHolder) convertView.getTag();
         }
 
         Visit item = getItem(position);
@@ -47,10 +44,5 @@ public class VisitAdapter extends ArrayAdapter<Visit> {
         }
 
         return convertView;
-    }
-
-    private static class ViewHolder {
-        private TextView startDateView;
-        private TextView endDateView;
     }
 }
