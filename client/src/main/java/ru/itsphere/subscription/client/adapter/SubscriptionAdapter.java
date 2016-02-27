@@ -2,6 +2,8 @@ package ru.itsphere.subscription.client.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,8 +63,8 @@ public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
         final Subscription item = getItem(position);
         if (item != null) {
             viewHolder.nameView.setText(String.format("%s", item.getName()));
-            viewHolder.purchaseDateView.setText(item.getCreationDate() ==null ? "" : AppDateFormat.formatDateWithHoursAndMinutes(item.getCreationDate()));
-            viewHolder.visitsNumberView.setText(String.valueOf(item.getVisits().size() + "/" + item.getVisitsNumber()));
+            viewHolder.purchaseDateView.setText(item.getCreationDate() == null ? "" : AppDateFormat.formatDateWithHoursAndMinutes(item.getCreationDate()));
+            setVisitsNumber(viewHolder, item);
             viewHolder.showVisitsButton.setOnClickListener(new ImageButton.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -74,7 +76,7 @@ public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
             viewHolder.startNewVisitButton.setOnClickListener(new ImageButton.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onSubscriptionClick(v, viewHolder.progressBar, item);
+                    onStartVisitClick(v, viewHolder, item);
                 }
             });
         }
@@ -82,7 +84,20 @@ public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
         return convertView;
     }
 
-    private void onSubscriptionClick(View view, ProgressBar progressBar, final Subscription subscription) {
+    private void setVisitsNumberInUIThread(final ViewHolder viewHolder, final Subscription item) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                setVisitsNumber(viewHolder, item);
+            }
+        });
+    }
+
+    private void setVisitsNumber(ViewHolder viewHolder, Subscription item) {
+        viewHolder.visitsNumberView.setText(item.getVisits().size() + "/" + item.getVisitsNumber());
+    }
+
+    private void onStartVisitClick(View view, ViewHolder viewHolder, final Subscription subscription) {
         ClientApplication context = (ClientApplication) getContext().getApplicationContext();
         Call<Visit> call = context.getServer().registerVisit(subscription);
         if (call == null) {
@@ -93,32 +108,33 @@ public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
             ToastUtils.makeText(context, msg, Toast.LENGTH_LONG);
             return;
         }
-        progressBar.setProgress(100);
-        progressBar.setVisibility(View.VISIBLE);
-        enqueueRegisterVisit(call, progressBar);
+        viewHolder.progressBar.setProgress(100);
+        viewHolder.progressBar.setVisibility(View.VISIBLE);
+        enqueueRegisterVisit(call, viewHolder, subscription);
     }
 
-    private void enqueueRegisterVisit(Call<Visit> call, final ProgressBar clickedViewProgressBar) {
+    private void enqueueRegisterVisit(Call<Visit> call, final ViewHolder viewHolder, final Subscription subscription) {
         call.enqueue(new Callback<Visit>() {
             @Override
             public void onResponse(final Response<Visit> response, Retrofit retrofit) {
-                onRegisterVisitResponse(response, clickedViewProgressBar);
+                onRegisterVisitResponse(response, viewHolder, subscription);
             }
 
             @Override
             public void onFailure(Throwable t) {
-                onRegisterVisitFailure(t, clickedViewProgressBar);
+                onRegisterVisitFailure(t, viewHolder, subscription);
             }
         });
     }
 
-    private void onRegisterVisitResponse(Response<Visit> response, ProgressBar clickedViewProgressBar) {
+    private void onRegisterVisitResponse(Response<Visit> response, ViewHolder viewHolder, Subscription subscription) {
         addVisitToSubscription(response.body());
+        setVisitsNumberInUIThread(viewHolder, subscription);
         final int millisInFuture = 10000;
         final int countDownInterval = 10;
         String msg = new StringBuilder().append(getContext().getString(R.string.sub_visit_progress_start)).toString();
         ToastUtils.makeText(getContext(), msg, Toast.LENGTH_LONG);
-        startCountDownTimer(response, millisInFuture, countDownInterval, clickedViewProgressBar);
+        startCountDownTimer(response, millisInFuture, countDownInterval, viewHolder.progressBar);
     }
 
     private void startCountDownTimer(final Response<Visit> response, final int millisInFuture, int countDownInterval, final ProgressBar clickedViewProgressBar) {
@@ -187,11 +203,12 @@ public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
         }
     }
 
-    private void onRegisterVisitFailure(Throwable t, ProgressBar clickedViewProgressBar) {
+    private void onRegisterVisitFailure(Throwable t, ViewHolder viewHolder, Subscription subscription) {
         String msg = "registerVisit has thrown an exception: ";
         Log.e(tag, msg, t);
-        clickedViewProgressBar.setVisibility(View.GONE);
+        viewHolder.progressBar.setVisibility(View.GONE);
         ToastUtils.makeText(getContext(), msg, Toast.LENGTH_LONG);
+        setVisitsNumberInUIThread(viewHolder, subscription);
     }
 
     private static class ViewHolder {
