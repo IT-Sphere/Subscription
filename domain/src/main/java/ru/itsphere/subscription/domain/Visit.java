@@ -51,4 +51,20 @@ public class Visit implements Serializable {
     public void setSubscriptionId(long subscriptionId) {
         this.subscriptionId = subscriptionId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Visit)) return false;
+
+        Visit visit = (Visit) o;
+
+        return getId() == visit.getId();
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (getId() ^ (getId() >>> 32));
+    }
 }

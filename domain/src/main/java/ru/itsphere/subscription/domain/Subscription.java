@@ -80,4 +80,20 @@ public class Subscription {
     public void setVisits(Set<Visit> visits) {
         this.visits = visits;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Subscription)) return false;
+
+        Subscription that = (Subscription) o;
+
+        return getId() == that.getId();
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (getId() ^ (getId() >>> 32));
+    }
 }

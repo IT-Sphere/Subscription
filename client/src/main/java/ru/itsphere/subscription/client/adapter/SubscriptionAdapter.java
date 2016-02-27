@@ -128,27 +128,28 @@ public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
     }
 
     private void onRegisterVisitResponse(Response<Visit> response, ViewHolder viewHolder, Subscription subscription) {
-        addVisitToSubscription(response.body());
+        addVisitToSubscription(response.body(), subscription);
         setVisitsNumberInUIThread(viewHolder, subscription);
+
         final int millisInFuture = 10000;
         final int countDownInterval = 10;
         String msg = new StringBuilder().append(getContext().getString(R.string.sub_visit_progress_start)).toString();
         ToastUtils.makeText(getContext(), msg, Toast.LENGTH_LONG);
-        startCountDownTimer(response, millisInFuture, countDownInterval, viewHolder.progressBar);
+        startCountDownTimer(response, subscription, millisInFuture, countDownInterval, viewHolder.progressBar);
     }
 
-    private void startCountDownTimer(final Response<Visit> response, final int millisInFuture, int countDownInterval, final ProgressBar clickedViewProgressBar) {
+    private void startCountDownTimer(final Response<Visit> response, final Subscription subscription, final int millisInFuture, int countDownInterval, final ProgressBar clickedViewProgressBar) {
         new CountDownTimerObservable(new Observer() {
             @Override
             public void update(Observable observable, Object data) {
-                onCountDownTimerUpdate(data, clickedViewProgressBar, response, millisInFuture);
+                onCountDownTimerUpdate(data, subscription, clickedViewProgressBar, response, millisInFuture);
             }
         }, millisInFuture, countDownInterval).start();
     }
 
-    private void onCountDownTimerUpdate(Object data, ProgressBar clickedViewProgressBar, Response<Visit> response, int millisInFuture) {
+    private void onCountDownTimerUpdate(Object data, Subscription subscription, ProgressBar clickedViewProgressBar, Response<Visit> response, int millisInFuture) {
         if (data == null) {
-            onCountDownTimerFinish(clickedViewProgressBar, response);
+            onCountDownTimerFinish(clickedViewProgressBar, response, subscription);
         } else {
             onCountDownTimerTick((long) data, millisInFuture, clickedViewProgressBar);
         }
@@ -160,19 +161,19 @@ public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
         clickedViewProgressBar.setProgress(progress);
     }
 
-    private void onCountDownTimerFinish(final ProgressBar clickedViewProgressBar, Response<Visit> response) {
+    private void onCountDownTimerFinish(final ProgressBar clickedViewProgressBar, Response<Visit> response, Subscription subscription) {
         clickedViewProgressBar.setVisibility(View.INVISIBLE);
-        enqueueFinishVisit(clickedViewProgressBar, response);
+        enqueueFinishVisit(clickedViewProgressBar, response, subscription);
         String msg = new StringBuilder().append(getContext().getString(R.string.sub_visit_progress_end)).toString();
         ToastUtils.makeText(getContext(), msg, Toast.LENGTH_LONG);
     }
 
-    private void enqueueFinishVisit(final ProgressBar clickedViewProgressBar, Response<Visit> response) {
+    private void enqueueFinishVisit(final ProgressBar clickedViewProgressBar, Response<Visit> response, final Subscription subscription) {
         ClientApplication context = (ClientApplication) getContext().getApplicationContext();
         context.getServer().finishVisit(response.body()).enqueue(new Callback<Visit>() {
             @Override
             public void onResponse(Response<Visit> response, Retrofit retrofit) {
-                onFinishVisitResponse(response);
+                onFinishVisitResponse(response, subscription);
             }
 
             @Override
@@ -182,8 +183,9 @@ public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
         });
     }
 
-    private void onFinishVisitResponse(Response<Visit> response) {
-        addVisitToSubscription(response.body());
+    private void onFinishVisitResponse(Response<Visit> response, Subscription subscription) {
+        Visit finishedVisit = response.body();
+        addVisitToSubscription(finishedVisit, subscription);
     }
 
     private void onFinishVisitFailure(Throwable t, ProgressBar clickedViewProgressBar) {
@@ -193,14 +195,9 @@ public class SubscriptionAdapter extends ArrayAdapter<Subscription> {
         ToastUtils.makeText(getContext(), msg, Toast.LENGTH_LONG);
     }
 
-    private void addVisitToSubscription(Visit visit) {
-        ClientApplication context = (ClientApplication) getContext().getApplicationContext();
-        for (Subscription sub : context.getCurrentClient().getSubscriptions()) {
-            if (sub.getId() == visit.getSubscriptionId()) {
-                sub.getVisits().add(visit);
-                return;
-            }
-        }
+    private void addVisitToSubscription(Visit visit, Subscription subscription) {
+        subscription.getVisits().remove(visit);
+        subscription.getVisits().add(visit);
     }
 
     private void onRegisterVisitFailure(Throwable t, ViewHolder viewHolder, Subscription subscription) {
